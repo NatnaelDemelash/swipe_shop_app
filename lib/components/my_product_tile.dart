@@ -1,10 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:suq_app/models/product.dart';
+
+import '../models/shop.dart';
 
 class MyProductTile extends StatelessWidget {
   final Product product;
 
   const MyProductTile({super.key, required this.product});
+
+  void addItemToCart(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: const Text('Add this Item to your cart?'),
+        actions: [
+          // Cancel button
+          MaterialButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          // Yes
+          MaterialButton(
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<Shop>().addItemToCart(product);
+            },
+            child: const Text('Yes'),
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +61,7 @@ class MyProductTile extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.secondary,
                   ),
-                  child: Icon(Icons.favorite),
+                  child: const Icon(Icons.favorite),
                 ),
               ),
 
@@ -40,7 +69,8 @@ class MyProductTile extends StatelessWidget {
               // product name
               Text(
                 product.productName,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 10),
@@ -49,12 +79,13 @@ class MyProductTile extends StatelessWidget {
             ],
           ),
 
-          // product price  +  addToCart button
+          // product price  +  addItemToCart button
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
+                // ignore: prefer_interpolation_to_compose_strings
                 '\$ ' + product.price.toStringAsFixed(2),
               ),
               Container(
@@ -62,7 +93,7 @@ class MyProductTile extends StatelessWidget {
                     color: Theme.of(context).colorScheme.inversePrimary,
                     borderRadius: BorderRadius.circular(50)),
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () => addItemToCart(context),
                   icon: const Icon(Icons.add),
                   color: Theme.of(context).colorScheme.secondary,
                 ),
