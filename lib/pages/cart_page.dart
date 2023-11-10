@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:suq_app/components/my_button.dart';
 
 import '../models/shop.dart';
 
@@ -32,11 +33,21 @@ class CartPage extends StatelessWidget {
     );
   }
 
+  void pressedPayButton(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const AlertDialog(
+        content: Text('Sorry Functionality not implmented'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<Shop>().cart;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -46,21 +57,33 @@ class CartPage extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-              child: ListView.builder(
-            itemCount: cart.length,
-            itemBuilder: (context, index) {
-              final item = cart[index];
+            child: cart.isEmpty
+                ? const Center(
+                    child: Text(
+                    'Your Cart is Empty',
+                    style: TextStyle(fontSize: 22),
+                  ))
+                : ListView.builder(
+                    itemCount: cart.length,
+                    itemBuilder: (context, index) {
+                      final item = cart[index];
 
-              return ListTile(
-                title: Text(item.productName),
-                subtitle: Text(item.price.toStringAsFixed(2)),
-                trailing: IconButton(
-                  onPressed: () => removeItmeFromCart(context, item),
-                  icon: const Icon(Icons.remove),
-                ),
-              );
-            },
-          ))
+                      return ListTile(
+                        title: Text(item.productName),
+                        subtitle: Text(item.price.toStringAsFixed(2)),
+                        trailing: IconButton(
+                          onPressed: () => removeItmeFromCart(context, item),
+                          icon: const Icon(Icons.remove),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          MyButton(
+            onTap: () => pressedPayButton(context),
+            child: Text('PAY NOW'),
+          ),
+          const SizedBox(height: 30)
         ],
       ),
     );
